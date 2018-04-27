@@ -205,15 +205,9 @@ void alsa_open(snd_pcm_t** capture_handle,int channels,uint32_t rate,snd_pcm_for
     snd_pcm_hw_params_free(hw_params);
 }
 
-void system_pause() {
-    system("echo mem > /sys/power/state");
-}
-
 bool system_command(const char* cmd) {
     pid_t status = 0;
     bool ret_value = false;
-
-    //fprintf(stderr,"System [%s]\n", cmd);
 
     status = system(cmd);
 
@@ -224,7 +218,7 @@ bool system_command(const char* cmd) {
             if (0 == WEXITSTATUS(status)) {
                 ret_value = true;
             } else {
-                fprintf(stderr,"System shell script failed:[%d].", WEXITSTATUS(status));
+                fprintf(stderr,"System shell script failed:[%d].\n", WEXITSTATUS(status));
             }
         } else {
             //fprintf(stderr,"System status = [%d]\n", WEXITSTATUS(status));
@@ -238,8 +232,7 @@ int main(int argc, char *argv[])
 {
     int i,  n = 0, buffer_frames = 1024, channels = 8;
     size_t BUFSIZE = (int)(buffer_frames * snd_pcm_format_width(SND_PCM_FORMAT_S16_LE) / 8 * channels);
-    size_t b = BUFSIZE;
-    char buffer[b];
+    char buffer[BUFSIZE];
     snd_pcm_t *capture_handle;
     unsigned int rate = 16000;
     snd_pcm_format_t format = SND_PCM_FORMAT_S16_LE;
@@ -266,21 +259,6 @@ int main(int argc, char *argv[])
     sleep(1);
     system_command("dhcpcd wlan0");
 
-    /**
-     *
-     * enum {
-     *     LED_MULTI_PURE_COLOR_GREEN = 0,
-     *     LED_MULTI_PURE_COLOR_RED,
-     *     LED_MULTI_PURE_COLOR_BLUE,
-     *     LED_MULTI_PURE_COLOR_WHITE,
-     *     LED_MULTI_PURE_COLOR_BLACK,
-     *     LED_MULTI_PURE_COLOR_NON_GREEN,
-     *     LED_MULTI_PURE_COLOR_NON_RED,
-     *     LED_MULTI_PURE_COLOR_NON_BLUE,
-     *     LED_MULTI_PURE_COLOR_MAX,
-     * };
-     *
-     */
     ledNumber = infoled->leds_multi_init();
     if(ledNumber < 0) {
         printf("led init failed\n");
@@ -310,34 +288,7 @@ int main(int argc, char *argv[])
     int supportChannel = api_cae_get_channel();
     printf("\n CAE current support channel num is : %d\n", supportChannel);
 
-    alsa_open(&capture_handle,channels,rate,format);
-
-    if ((err = snd_pcm_prepare(capture_handle)) < 0) {
-        fprintf(stderr, "cannot prepare audio interface for use (%s)\n",
-                snd_strerror(err));
-        exit(1);
-    }
-
-    char temp[BUFSIZE*2];
-    int count = 10;
-    FILE *file = fopen("/tmp/vad_before.pcm","a+");
-    fprintf(stderr,"write vad before data\n");
-
-    int readed_frame;
-    while ((readed_frame = snd_pcm_readi(capture_handle, buffer, buffer_frames)) >= 0 && count-- > 0)
-    {		
-        b = (int)(readed_frame * snd_pcm_format_width(SND_PCM_FORMAT_S16_LE) / 8 * channels);
-#ifdef DEBUG_WRITE_DATA
-        fwrite(buffer,1,b,file);
-#endif
-    }
-    fclose(file);
-    snd_pcm_close(capture_handle);
-
     test_led_off(infoled);
-
-    //system_pause();
-
     test_led_on(infoled, LED_MULTI_PURE_COLOR_BLUE);
 
     alsa_open(&capture_handle,channels,rate,format);
@@ -347,18 +298,20 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    file = fopen("/tmp/vad.pcm","a+");
-    fprintf(stderr,"write vad data\n");
-    while ((readed_frame = snd_pcm_readi(capture_handle, buffer, buffer_frames)) >= 0)
+    FILE* file = fopen("/tmp/vad.pcm","a+");
+    int read_frame;
+    size_t read_buffer_size;
+    char temp[BUFSIZE*2];
+    while ((read_frame = snd_pcm_readi(capture_handle, buffer, buffer_frames)) >= 0)
     {		
-        b = (int)(readed_frame * snd_pcm_format_width(SND_PCM_FORMAT_S16_LE) / 8 * channels);
+        read_buffer_size = (int)(read_frame * snd_pcm_format_width(SND_PCM_FORMAT_S16_LE) / 8 * channels);
 #ifdef DEBUG_WRITE_DATA
-        fwrite(buffer,1,b,file);
+        fwrite(buffer,1,read_buffer_size,file);
 #endif
-        preProcessBuffer(buffer, temp, BUFSIZE);
-        err = api_cae_audio_write(cae, temp, BUFSIZE*2);
+        preProcessBuffer(buffer, temp, read_buffer_size);
+        err = api_cae_audio_write(cae, temp, read_buffer_size*2);
         if(err < 0) {
-            err = api_cae_audio_write(cae, temp, BUFSIZE*2);
+            err = api_cae_audio_write(cae, temp, read_buffer_size*2);
             printf("try again err:%d\n",err);
         }
     }
