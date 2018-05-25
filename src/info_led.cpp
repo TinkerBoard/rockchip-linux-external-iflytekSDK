@@ -1,24 +1,3 @@
-/*
- *  Copyright (c) 2005-2017 Fuzhou Rockchip Electronics Co.Ltd
- *
- * Permission to use, copy, modify, distribute, and sell this software and its
- * documentation for any purpose is hereby granted without fee, provided that
- * the above copyright notice appear in all copies and that both that copyright
- * notice and this permission notice appear in supporting documentation, and
- * that the name of the copyright holders not be used in advertising or
- * publicity pertaining to distribution of the software without specific,
- * written prior permission.  The copyright holders make no representations
- * about the suitability of this software for any purpose.  It is provided "as
- * is" without express or implied warranty.
- *
- * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
- * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
- * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
- * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
- * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
- * OF THIS SOFTWARE.
- */
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -26,7 +5,8 @@
 #include <string.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
-#include "InfoLed.h"
+
+#include "info_led.h"
 
 #if 1
 struct led_ctrl_data {
@@ -219,14 +199,13 @@ int InfoLed::leds_multi_init(void)
         return -1;
     }
 
-    led_multi_data = (struct led_ctrl_data *)malloc(sizeof(struct led_ctrl_data)*leds_num);
-    if (led_multi_data ==NULL) {
+    led_multi_data = (struct led_ctrl_data *)malloc(sizeof(struct led_ctrl_data) * leds_num);
+    if (led_multi_data == NULL) {
         fprintf(stderr,"%s,out of memory\n",__func__);
         return -1;
     }
-    fprintf(stderr,"%s,the led number is %d\n",__func__,leds_num);
 
-    return 0;
+    return leds_num;
 }
 
 int InfoLed::leds_multi_set_one_led(int index, int color)
@@ -437,7 +416,8 @@ void InfoLed::led_system_start_t() {
     }
 }
 
-void InfoLed::mainloop() {
+void InfoLed::mainloop()
+{
     std::unique_lock<std::mutex> lck(m_mtx);
 
     m_oldState = State::OFF;
@@ -450,7 +430,7 @@ void InfoLed::mainloop() {
 
     };
 
-    if(leds_multi_init()) {
+    if (leds_multi_init()) {
         m_isLedInitialized = false;
         return;
     }

@@ -1,22 +1,3 @@
-/*
- * @file
- * @brief a record demo in linux
- *
- * a simple record code. using alsa-lib APIs.
- * keep the function same as winrec.h
- *
- * Common steps:
- *	create_recorder,
- *	open_recorder, 
- *	start_record, 
- *	stop_record, 
- *	close_recorder,
- *	destroy_recorder
- *
- * @author		taozhang9
- * @date		2016/06/01
- */
-
 #ifndef __IFLY_WINREC_H__
 #define __IFLY_WINREC_H__
 

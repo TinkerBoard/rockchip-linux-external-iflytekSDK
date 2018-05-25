@@ -1,16 +1,17 @@
-######################################
-#
-#######################################
-#source file
+#####################################
+### iFlyteck SDK demo application ###
+#####################################
+
+# source file
 SOURCE  := $(wildcard src/*.c) $(wildcard src/*.cpp)
 OBJS    := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCE)))
 
-#target you can change test to what you want
+# target you can change test to what you want
 TARGET  := iflytekDemo 
-#compile and lib parameter
-#CC      := ../../buildroot/output/host/usr/bin/aarch64-rockchip-linux-gnu-gcc
-#CXX     := ../../buildroot/output/host/usr/bin/aarch64-rockchip-linux-gnu-g++
-#LD      := ../../buildroot/output/host/usr/bin/aarch64-rockchip-linux-gnu-ld
+# compile and lib parameter
+CC      := ../../buildroot/output/rockchip_rk3326_release/host/usr/bin/aarch64-rockchip-linux-gnu-gcc
+CXX     := ../../buildroot/output/rockchip_rk3326_release/host/usr/bin/aarch64-rockchip-linux-gnu-g++
+LD      := ../../buildroot/output/rockchip_rk3326_release/host/usr/bin/aarch64-rockchip-linux-gnu-ld
 LIBS    := -ldl -lpthread -lcae -lIvw60 -lmsc -lasound 
 LDFLAGS := -Llibs/
 DEFINES := -fpic -Wl,-rpath=.
@@ -34,12 +35,9 @@ objs : $(OBJS)
 
 rebuild: veryclean everything
 
-
 clean :
-	    rm -rf src/*.o
-		rm $(TARGET)
+	rm -rf src/*.o
+	rm $(TARGET)
 
 veryclean : clean
-	    rm -rf $(TARGET)
-
-
+	rm -rf $(TARGET)

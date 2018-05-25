@@ -1,11 +1,3 @@
-/*
-@file
-@brief  record demo for linux
-
-@author		taozhang9
-@date		2016/05/27
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
