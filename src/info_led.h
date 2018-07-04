@@ -2,12 +2,12 @@
 #define __RK_LEDS_H__
 
 #ifdef __cplusplus
-#include <memory>
-#include <thread>
-#include <atomic>
-#include <condition_variable>
-#include <mutex>
-#include <time.h>
+    #include <memory>
+    #include <thread>
+    #include <atomic>
+    #include <condition_variable>
+    #include <mutex>
+    #include <time.h>
 #endif
 
 #if 1
@@ -28,7 +28,8 @@
 #define LED_BRIGHTNESS_HALF 127
 #define LED_BRIGHTNESS_OFF 0
 
-enum {
+enum
+{
     MULTI_TRIGGER_NONE = 0,
     MULTI_TRIGGER_DEFAULT_ON,
     MULTI_TRIGGER_TIMER,
@@ -36,7 +37,8 @@ enum {
     MULTI_TRIGGER_MAX,
 };
 
-enum {
+enum
+{
     LED_MULTI_PURE_COLOR_GREEN = 0,
     LED_MULTI_PURE_COLOR_RED,
     LED_MULTI_PURE_COLOR_BLUE,
@@ -50,8 +52,9 @@ enum {
 #endif
 
 #define NUMBER_OF_LEDS		12
-typedef enum {
-    MODE_START=1,
+typedef enum
+{
+    MODE_START = 1,
     MODE_OFF,
     MODE_VP,
     MODE_VP_WAKEUP,
@@ -74,7 +77,7 @@ typedef enum {
 
 class InfoLed
 {
-public:
+  public:
     InfoLed();
     ~InfoLed();
     void init();
@@ -83,7 +86,8 @@ public:
     int led_all_on(int color);
     void led_all_off();
     //private:
-    enum class State {
+    enum class State
+    {
         UNINITIALIZED = 1,            // agent is not initialized.
         OFF,
         IDLE,                         // initialized, but idle.
@@ -111,7 +115,7 @@ public:
     int leds_multi_all_off(void);
     int leds_multi_certain_on(int idx_bitmap, int color);
     int leds_multi_certain_on_with_bgcolor(int idx_bitmap, int bg_color, int color);
-    int leds_multi_all_blink(unsigned int color,unsigned int delay_on, unsigned int delay_off);
+    int leds_multi_all_blink(unsigned int color, unsigned int delay_on, unsigned int delay_off);
     int leds_multi_set_scroll(uint64_t bitmap_color, uint32_t color, uint32_t  bg_color, uint32_t shift, uint32_t delay_ms);
     int leds_multi_set_breath(uint32_t breath_color, uint32_t bg_color, uint32_t delay_ms, uint32_t steps);
 

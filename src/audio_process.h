@@ -6,6 +6,7 @@
 class AudioProcess
 {
 public:
+    static const char* getIatSessionId();
     static bool MSP_Login(const char* loginParams);
     static bool paddingIatAudio(const char* audioData, unsigned int audioLen,
                                 CAEUserData *userData);

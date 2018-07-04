@@ -16,6 +16,11 @@ public:
     static const char* kTTSsessionParams;
     static const char* kJsonQuestionNotFound;
     static const char* kMSCVadPrompt;
+    static const char* kCaeWakeupWorkds;
+	static const char* kWifiConnected;
+    static const char* kJsonNotLink;
+    static const char* kJsonNotPreChapter;
+    static const char* kJsonNotNextChapter;
 };
 
 #endif // CONSTANT_VALUE_H_

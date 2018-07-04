@@ -21,7 +21,7 @@ static const string terminal_color_yellow("\033[33m");
 static const string empty;
 
 static void print_prefixed_message(std::ostream& stream, const string& color, const string& prefix,
-                       const string& fmt, va_list ap)
+                                   const string& fmt, va_list ap)
 {
     va_list aq;
 
@@ -43,11 +43,13 @@ static void print_prefixed_message(std::ostream& stream, const string& color, co
      * If the target stream is a terminal make the prefix colored.
      */
     string linePrefix;
-    if (!prefix.empty()) {
+    if(!prefix.empty())
+    {
         static const string colon(": ");
         string start_color;
         string end_color;
-        if (!color.empty()) {
+        if(!color.empty())
+        {
             start_color = color;
             end_color = terminal_color_normal;
         }
@@ -57,21 +59,27 @@ static void print_prefixed_message(std::ostream& stream, const string& color, co
     std::string line;
     std::stringstream ss(buf);
 
-    while (std::getline(ss, line)) {
+    while(std::getline(ss, line))
+    {
         /*
          * If this line is a continuation of a previous log message
          * just print the line plainly.
          */
-        if (line[0] == Log::continuation_prefix[0]) {
+        if(line[0] == Log::continuation_prefix[0])
+        {
             stream << line.c_str() + 1;
-        } else {
+        }
+        else
+        {
             /* Normal line, emit the prefix. */
             stream << linePrefix << line;
         }
 
         /* Only emit a newline if the original message has it. */
-        if (!(ss.rdstate() & std::stringstream::eofbit))
+        if(!(ss.rdstate() & std::stringstream::eofbit))
+        {
             stream << std::endl;
+        }
     }
 
     delete[] buf;
@@ -89,8 +97,10 @@ void Log::info(const char *fmt, ...)
     const string& color(do_debug_ ? infocolor : empty);
     print_prefixed_message(std::cout, color, prefix, fmt, ap);
 
-    if (extra_out_)
+    if(extra_out_)
+    {
         print_prefixed_message(*extra_out_, empty, prefix, fmt, ap);
+    }
 
     va_end(ap);
 }
@@ -98,16 +108,20 @@ void Log::info(const char *fmt, ...)
 void Log::debug(const char *fmt, ...)
 {
     static const string dbgprefix("Debug");
-    if (!do_debug_)
+    if(!do_debug_)
+    {
         return;
+    }
     va_list ap;
     va_start(ap, fmt);
 
     static const string& dbgcolor(isatty(fileno(stdout)) ? terminal_color_yellow : empty);
     print_prefixed_message(std::cout, dbgcolor, dbgprefix, fmt, ap);
 
-    if (extra_out_)
+    if(extra_out_)
+    {
         print_prefixed_message(*extra_out_, empty, dbgprefix, fmt, ap);
+    }
 
     va_end(ap);
 }
@@ -121,8 +135,10 @@ void Log::error(const char *fmt, ...)
     static const string& errcolor(isatty(fileno(stderr)) ? terminal_color_red : empty);
     print_prefixed_message(std::cerr, errcolor, errprefix, fmt, ap);
 
-    if (extra_out_)
+    if(extra_out_)
+    {
         print_prefixed_message(*extra_out_, empty, errprefix, fmt, ap);
+    }
 
     va_end(ap);
 }
@@ -132,6 +148,8 @@ void Log::flush()
     std::cout.flush();
     std::cerr.flush();
 
-    if (extra_out_)
+    if(extra_out_)
+    {
         extra_out_->flush();
+    }
 }

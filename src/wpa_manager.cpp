@@ -10,8 +10,10 @@ WPAManager *WPAManager::_instance = NULL;
 
 WPAManager* WPAManager::getInstance()
 {
-    if (!_instance)
+    if(!_instance)
+    {
         _instance = new WPAManager();
+    }
 
     return _instance;
 }
@@ -29,14 +31,16 @@ int get_pid(char *processName)
 
     len = strlen(processName);
     strncpy(name, processName, len);
-    name[len] ='\0';
+    name[len] = '\0';
     FILE *pFile = NULL;
     int pid = 0;
 
     sprintf(cmd, "pidof %s", name);
     pFile = popen(cmd, "r");
-    if (pFile != NULL)  {
-        while (fgets(cmdresult, sizeof(cmdresult), pFile)) {
+    if(pFile != NULL)
+    {
+        while(fgets(cmdresult, sizeof(cmdresult), pFile))
+        {
             pid = atoi(cmdresult);
             break;
         }

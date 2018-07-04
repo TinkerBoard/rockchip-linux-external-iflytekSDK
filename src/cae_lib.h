@@ -8,11 +8,16 @@
 #include "cae_intf.h"
 #include "dlfcn.h"
 
-typedef struct _CAEUserData {
+typedef struct _CAEUserData
+{
     FILE *fp_out;
     std::shared_ptr<InfoLed> infoled;
-    bool wakeUpState;
-    bool newSession;
+    bool wakeUpState;//indicated is wakeup
+    bool newSession;//indicated is new iat session
+    bool mscInProcess;//indicated tts is in process
+    bool suspendFlag;//used for tts interrupt
+    bool wakeUping;//indicated wakeup is in progress
+    char curFunc[20];//indicated current function,music,readbook,bt,or something
 } CAEUserData;
 
 /* ------------------------------------------------------------------------
